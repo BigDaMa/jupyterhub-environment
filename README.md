@@ -99,4 +99,4 @@ The `nbgrader_config.py` file includes some basic configurations for the nbgrade
 
 ## 5 - Troubleshooting
 
-[architectureDiagram]: file:///C:/Users/Hagen/Dropbox/BIGDAMA/JupyterHub2.png "Architecture diagram"
+[architectureDiagram]: ./resources/JupyterHub2.png "Architecture diagram"
