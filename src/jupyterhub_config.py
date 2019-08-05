@@ -37,3 +37,6 @@ c.LDAPAuthenticator.escape_userdn = False
 # User whitelist
 c.Authenticator.admin_users = {'data8'}
 c.Authenticator.username_map = {'boninho': 'data8', 'esmailoghli': 'data8', 'abedjan': 'data8', 'm.mahdavi': 'data8', 'hagenanuth': 'data8'}
+
+# Dummy Authenticator: Uncommed for testing only. Any Username/Password combination works
+#c.JupyterHub.authenticator_class = 'dummyauthenticator.DummyAuthenticator'

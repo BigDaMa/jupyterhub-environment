@@ -77,11 +77,13 @@ The JupyterHub is configured via *jupyterhub_config.py*.
 	c.LDAPAuthenticator.user_attribute = 'sAMAccountName'
 	c.LDAPAuthenticator.escape_userdn = False
 
+**DummyAuthenticator:** For testing use (not for production!), the [DummyAuthenticator](https://github.com/jupyterhub/dummyauthenticator) can be used. This Authenticator accepts all username/password combinations. Just uncomment the last line of the **jupyterhub_config.py**.
+
 ### Docker
 
 In order to provide **nbgrader** and **nbgitpuller** support, a customized docker image is necessary.
 
-The docker image is based on the [minimal-notebook](https://github.com/jupyter/docker-stacks/tree/master/minimal-notebook) image. It further installs and enables the nbgitpuller tool and the nbgrader extension.
+The docker image is based on the [minimal-notebook](https://github.com/jupyter/docker-stacks/tree/master/minimal-notebook) image. It further installs and enables the nbgitpuller tool and the nbgrader extension. The latest stable version of nbgrader is currently v.0.5.5, but in our case it is important to install version >= v.0.6.0, because earlier versions would choose the system username **jovyan** instead of the actual JupyterHub username (which is the TUBIT ID). Currently v.0.6.0 has to be installed from the github sources.
 It also creates the directory `/home/jovyan/exchange` which is the mounting point of the shared exchange directory. A nbgrader configuration is copied to `/home/jovyan/.jupyter`, this file is further explained in the following section.
 Finally, we replace the `start-notebook.sh` script which is executed when the container boots. The script generally just starts the jupyter notebook server. In the altered version it also checks whether the Repository with the course sources is already available in the workspace. If not, it is cloned.
 
@@ -94,6 +96,10 @@ The `nbgrader_config.py` file includes some basic configurations for the nbgrade
 | `c.Exchange.course_id` | The ID of the nbgrader course. E.g. `'data8'` |
 | `c.Exchange.root` | The path to the shared nbgrader directory. Must match the `exchange_dir` variable in `jupyterhub_config.py`. E.g. `'/home/jovyan/exchange'` |
 | `c.CourseDirectory.root` | This variable is relevant for the instructors (where formgrader is available). It should contain the location of the actual nbgrader course. E.g. `/home/jovyan/work/data8`. It should be a subdirectory of the persisted workspace of the admin user, so the course data will be persisted |
+
+### JupyterNotebook
+
+We also need to copy a sligthly modified version of the file **start-notebook.sh**. This file is executed when the container starts and it starts the JupyterNotebook server. We are additionally checking wheather the course repository is present in the working directory. If not, the repository is cloned to this location. We can't execute this step within the Dockerfile, because the persistent workspace volume is mounted on the container when it is spawned by the JupyterHub. Therefor, the working directory is only available after the first start and **not** when the container image is built.
 
 ## 4 - Operations
 

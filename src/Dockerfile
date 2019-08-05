@@ -3,8 +3,11 @@ ARG JUPYTERHUB_VERSION=1.0.0
 
 USER jovyan
 RUN pip install --no-cache \
-    jupyterhub==$JUPYTERHUB_VERSION nbgrader \
     nbgitpuller
+
+RUN git clone https://github.com/jupyter/nbgrader /home/jovyan/nbgrader
+RUN pip install -r /home/jovyan/nbgrader/dev-requirements.txt -e /home/jovyan/nbgrader
+
 RUN jupyter serverextension enable nbgitpuller --sys-prefix
 RUN jupyter nbextension install --user --py nbgrader --overwrite
 RUN jupyter nbextension enable --user --py nbgrader
