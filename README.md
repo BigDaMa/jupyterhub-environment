@@ -101,7 +101,41 @@ The `nbgrader_config.py` file includes some basic configurations for the nbgrade
 
 We also need to copy a sligthly modified version of the file **start-notebook.sh**. This file is executed when the container starts and it starts the JupyterNotebook server. We are additionally checking wheather the course repository is present in the working directory. If not, the repository is cloned to this location. We can't execute this step within the Dockerfile, because the persistent workspace volume is mounted on the container when it is spawned by the JupyterHub. Therefor, the working directory is only available after the first start and **not** when the container image is built.
 
-## 4 - Operations
+## 4 - Installation
+
+**1. Install python and pip (>=python3.5)**
+
+**2. Install docker**
+
+**3. Install npm**
+
+**4. Install neccessary libs**
+
+		pip install jupyterhub dockerspawner jupyterhub-ldapauthenticator jupyterhub-dummyauthenticator
+	
+**5. Install http-proxy**
+
+	npm install -g configurable-http-proxy
+
+**6. Clone git repository** (assuming $WORKSPACE is the path where jupyterhub should be installed)
+
+	cd $WORKSPACE
+	git clone https://github.com/BigDaMa/JupyterHub_environment
+
+**7. Edit jupyterhub_conf.sh (Insert IP and SSL-certificate location)**
+
+	vi ${WORKSPACE}/JupyterHub_environment/src/jupyterhub_config.py
+
+**8. Build docker image** (Note: The tag should equal the `c.DockerSpawner.image` configuration in `jupyterhub_config.py`)
+
+	cd ${WORKSPACE}/JupyterHub_environment/src
+	docker build -t jupyter-node ${WORKSPACE} .
+
+**9. Start jupyterhub**
+	
+	cd ${WORKSPACE}/JupyterHub_environment/src
+	jupyterhub
+
 
 ## 5 - Troubleshooting
 
