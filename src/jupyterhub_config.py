@@ -37,6 +37,16 @@ c.LDAPAuthenticator.escape_userdn = False
 # User whitelist
 c.Authenticator.admin_users = {'data8'}
 c.Authenticator.username_map = {'boninho': 'data8', 'esmailoghli': 'data8', 'abedjan': 'data8', 'm.mahdavi': 'data8', 'hagenanuth': 'data8'}
+# c.Authenticator.whitelist = {'mal', 'zoe', 'inara', 'kaylee'}
 
 # Dummy Authenticator: Uncommed for testing only. Any Username/Password combination works
-#c.JupyterHub.authenticator_class = 'dummyauthenticator.DummyAuthenticator'
+# c.JupyterHub.authenticator_class = 'dummyauthenticator.DummyAuthenticator'
+
+# Automatically stop idle containers after 1 hour
+c.JupyterHub.services = [
+    {
+        'name': 'cull-idle',
+        'admin': True,
+        'command': [sys.executable, 'cull_idle_servers.py', '--timeout=3600'],
+    }
+]

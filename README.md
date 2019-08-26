@@ -79,6 +79,10 @@ The JupyterHub is configured via *jupyterhub_config.py*.
 
 **DummyAuthenticator:** For testing use (not for production!), the [DummyAuthenticator](https://github.com/jupyterhub/dummyauthenticator) can be used. This Authenticator accepts all username/password combinations. Just uncomment the last line of the **jupyterhub_config.py**.
 
+#### cull-idle
+
+The service `cull-idle` stops idle containers after the configured time. E.g: `--timeout=3600` stops idle instances after 1 hour. Refer to the [cull-idle docs](https://github.com/jupyterhub/jupyterhub/tree/master/examples/cull-idle) for further information.
+
 ### Docker
 
 In order to provide **nbgrader** and **nbgitpuller** support, a customized docker image is necessary.
@@ -128,7 +132,7 @@ We can't execute this step within the Dockerfile, because the persistent workspa
 	cd $WORKSPACE
 	git clone https://github.com/BigDaMa/JupyterHub_environment
 
-**7. Edit jupyterhub_conf.sh** (Insert IP and SSL-certificate location)
+**7. Edit jupyterhub_conf.sh** (Insert IP, SSL-certificate location and user whitelist)
 
 	vi ${WORKSPACE}/JupyterHub_environment/src/jupyterhub_config.py
 
@@ -151,7 +155,5 @@ We can't execute this step within the Dockerfile, because the persistent workspa
 	nbgrader quickstart data8
 
 Note: `data8` is the course id. It has to match `c.CourseDirectory.course_id` and `c.CourseDirectory.root` in `nbgrader_config.py`.
-
-## 5 - Troubleshooting
 
 [architectureDiagram]: ./resources/JupyterHub2.png "Architecture diagram"
