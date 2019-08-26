@@ -89,7 +89,7 @@ The latest stable version of nbgrader is currently v.0.5.5, but in our case it i
 
 It also creates the directory `/home/jovyan/exchange` which is the mounting point of the shared exchange directory. A nbgrader configuration is copied to `/home/jovyan/.jupyter`, this file is further explained in the following section.
 
-Finally, we replace the `start-notebook.sh` script which is executed when the container boots. The script generally just starts the jupyter notebook server. In the altered version it also checks whether the Repository with the course sources is already available in the workspace. If not, it is cloned.
+lFinally, we replace the `start-notebook.sh` script which is executed when the container boots. The script generally just starts the jupyter notebook server. In the altered version it also checks whether the Repository with the course sources is already available in the workspace. If not, it is cloned.
 
 ### NbGrader
 
@@ -128,7 +128,7 @@ We can't execute this step within the Dockerfile, because the persistent workspa
 	cd $WORKSPACE
 	git clone https://github.com/BigDaMa/JupyterHub_environment
 
-**7. Edit jupyterhub_conf.sh (Insert IP and SSL-certificate location)**
+**7. Edit jupyterhub_conf.sh** (Insert IP and SSL-certificate location)
 
 	vi ${WORKSPACE}/JupyterHub_environment/src/jupyterhub_config.py
 
@@ -142,6 +142,15 @@ We can't execute this step within the Dockerfile, because the persistent workspa
 	cd ${WORKSPACE}/JupyterHub_environment/src
 	jupyterhub
 
+**10. Create nbgrader course** (If there is no nbgrader course created yet)
+- Log in to JupyterHub as admin
+- Open the terminal (New > Terminal)
+
+
+	cd /home/jovyan/work
+	nbgrader quickstart data8
+
+Note: `data8` is the course id. It has to match `c.CourseDirectory.course_id` and `c.CourseDirectory.root` in `nbgrader_config.py`.
 
 ## 5 - Troubleshooting
 
