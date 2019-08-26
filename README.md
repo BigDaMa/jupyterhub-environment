@@ -139,7 +139,7 @@ We can't execute this step within the Dockerfile, because the persistent workspa
 **8. Build docker image** (Note: The tag should equal the `c.DockerSpawner.image` configuration in `jupyterhub_config.py`)
 
 	cd ${WORKSPACE}/JupyterHub_environment/src
-	docker build -t jupyter-node ${WORKSPACE} .
+	docker build -t jupyter-node ${WORKSPACE}
 
 **9. Start jupyterhub**
 	
