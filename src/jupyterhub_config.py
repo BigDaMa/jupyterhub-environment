@@ -10,15 +10,15 @@ c.JupyterHub.hub_ip = '172.28.128.3'
 c.JupyterHub.hub_port = 8081
 
 # SSL configuration
-c.JupyterHub.ssl_key = '/home/data8/certs/server.key'
-c.JupyterHub.ssl_cert = '/home/data8/certs/server.crt'
+c.JupyterHub.ssl_key = '/etc/certs/server.key'
+c.JupyterHub.ssl_cert = '/etc/certs/server.crt'
 
 # Use docker spawner
 c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 c.DockerSpawner.image = 'jupyter-node'
 
 # Persist workspaces
-notebook_dir = '/home/jovyan/DS1EDP'
+notebook_dir = '/home/jovyan/work'
 exchange_dir = '/home/jovyan/.hidden/exchange'
 workspace_dir = '/home/jovyan'
 c.DockerSpawner.notebook_dir = workspace_dir
