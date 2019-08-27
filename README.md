@@ -50,8 +50,8 @@ The JupyterHub is configured via *jupyterhub_config.py*.
 |---|---|
 | `c.JupyterHub.spawner_class` | The desired [spawner](https://jupyterhub.readthedocs.io/en/stable/reference/spawners.html). In our case this has to be `'dockerspawner.DockerSpawner'`. Make sure that dockerspawner is installed via pip |
 | `c.DockerSpawner.image` | As we want to use a customized docker image, we have to provide the name. Mind that the image has to be available in the remote/local registry |
-| `notebook_dir` | We store the path of the jupyter servers workspace in this variable (inside container). This directory will be persisted. We use a [minimal image](https://github.com/jupyter/docker-stacks/tree/master/minimal-notebook) provided by the jupyter project, which comes with the default user **jovyan**. Thus, we set this variable to `/home/jovyan/work` |
-| `exchange_dir` | This variable should contain the path to the nbgrader exchange directory (shared by all users). The persistent exchange directory will be mounted to this path. This path should match the configured `c.Exchange.root` in the `nbgrader_config.py`. We will use `/home/jovyan/exchange` here |
+| `notebook_dir` | We store the path of the jupyter servers workspace in this variable (inside container). This directory will be persisted. We use a [minimal image](https://github.com/jupyter/docker-stacks/tree/master/minimal-notebook) provided by the jupyter project, which comes with the default user **jovyan**. Thus, we set this variable to `/home/jovyan` |
+| `exchange_dir` | This variable should contain the path to the nbgrader exchange directory (shared by all users). The persistent exchange directory will be mounted to this path. This path should match the configured `c.Exchange.root` in the `nbgrader_config.py`. We will use `/home/jovyan/.exchange` here |
 | `c.DockerSpawner.notebook_dir` | The entrypoint for the notebook server. Should match the mounted persistent directory. Thus it has to be `notebook_dir`, that we declared earlier |
 | `c.DockerSpawner.volumes` | The persistent volumes that we want to mount on the container. There is the users workspace and the shared excahnge directory. Set this to `{ 'jupyterhub-user-{username}': notebook_dir, 'exchange':  exchange_dir}`. On the server, the persistent user workspace will be created at `/var/lib/docker/volumes/jupyterhub-user-{username}` (while `{username}` is the TUBIT ID). The exchange directory can be found at `/var/lib/docker/volumes/exchange` accordingly |
 
@@ -91,9 +91,9 @@ The docker image is based on the [minimal-notebook](https://github.com/jupyter/d
 
 The latest stable version of nbgrader is currently v.0.5.5, but in our case it is important to install version >= v.0.6.0, because earlier versions would choose the system username **jovyan** instead of the actual JupyterHub username (which is the TUBIT ID) as student id. Currently v.0.6.0 has to be installed from the github sources.
 
-It also creates the directory `/home/jovyan/exchange` which is the mounting point of the shared exchange directory. A nbgrader configuration is copied to `/home/jovyan/.jupyter`, this file is further explained in the following section.
+It also creates the directory `/home/jovyan/.exchange` which is the mounting point of the shared exchange directory. A nbgrader configuration is copied to `/home/jovyan/.jupyter`, this file is further explained in the following section.
 
-lFinally, we replace the `start-notebook.sh` script which is executed when the container boots. The script generally just starts the jupyter notebook server. In the altered version it also checks whether the Repository with the course sources is already available in the workspace. If not, it is cloned.
+Finally, we replace the `start-notebook.sh` script which is executed when the container boots. The script generally just starts the jupyter notebook server. In the altered version it also checks whether the Repository with the course sources is already available in the workspace. If not, it is cloned.
 
 ### NbGrader
 
@@ -102,8 +102,8 @@ The `nbgrader_config.py` file includes some basic configurations for the nbgrade
 | Field | Description |
 |---|---|
 | `c.CourseDirectory.course_id` | The ID of the nbgrader course. E.g. `'ds1edp_ws19'` |
-| `c.Exchange.root` | The path to the shared nbgrader directory. Must match the `exchange_dir` variable in `jupyterhub_config.py`. E.g. `'/home/jovyan/exchange'` |
-| `c.CourseDirectory.root` | This variable is relevant for the instructors (where formgrader is available). It should contain the location of the actual nbgrader course. E.g. `/home/jovyan/work/ds1edp_ws19`. It should be a subdirectory of the persisted workspace of the admin user, so the course data will be persisted |
+| `c.Exchange.root` | The path to the shared nbgrader directory. Must match the `exchange_dir` variable in `jupyterhub_config.py`. E.g. `'/home/jovyan/.exchange'` |
+| `c.CourseDirectory.root` | This variable is relevant for the instructors (where formgrader is available). It should contain the location of the actual nbgrader course. E.g. `/home/jovyan/ds1edp_ws19`. It should be a subdirectory of the persisted workspace of the admin user, so the course data will be persisted |
 
 ### JupyterNotebook
 
@@ -163,7 +163,7 @@ We can't execute this step within the Dockerfile, because the persistent workspa
 - Open the terminal (New > Terminal)
 
 	
-	cd /home/jovyan/work
+	cd /home/jovyan
 	nbgrader quickstart ds1edp_ws19
 
 Note: `ds1edp_ws19` is the course id. It has to match `c.CourseDirectory.course_id` and `c.CourseDirectory.root` in `nbgrader_config.py`.
@@ -186,6 +186,6 @@ Location of the installation
 
 1. Copy persistent volumes from old server (usually at `/var/lib/docker/volumes`)
 2. Setup the new server and install JupyterHub as described in **4.**
-3. Before you log in for the first time, copy the persistent volumes to the new server (again usually to `/var/lin/docker/volumes`)
+3. Before you log in for the first time, copy the persistent volumes to the new server (again usually to `/var/lib/docker/volumes`)
 
 [architectureDiagram]: ./resources/JupyterHub2.png "Architecture diagram"
