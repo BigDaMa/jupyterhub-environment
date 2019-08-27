@@ -2,7 +2,7 @@
 # Copyright (c) Jupyter Development Team.
 # Distributed under the terms of the Modified BSD License.
 
-TARGET="/home/jovyan/work/DS1EDP"
+TARGET="/home/jovyan/DS1EDP"
 REPO_URL="https://github.com/BigDaMa/DS1EDP"
 
 if [[ -d ${TARGET} ]]; then
