@@ -150,9 +150,13 @@ We can't execute this step within the Dockerfile, because the persistent workspa
 - Log in to JupyterHub as **admin** - Students containers should **not** activate the extensions
 - Open the terminal (New > Terminal)
 
-	
-	jupyter nbextension enable --user --py nbgrader
-	jupyter serverextension enable --user --py nbgrader
+
+	jupyter nbextension enable --user create_assignment/main
+	jupyter nbextension enable --user formgrader/main --section=tree
+	jupyter serverextension enable --user nbgrader.server_extensions.formgrader
+
+
+- The formgrader might not work right away and show a 404 instead. Just restart the container and you should be good to go.
 
 **10. Create nbgrader course** (If there is no nbgrader course created yet)
 - Log in to JupyterHub as admin

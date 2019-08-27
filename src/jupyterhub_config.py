@@ -18,9 +18,10 @@ c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 c.DockerSpawner.image = 'jupyter-node'
 
 # Persist workspaces
-notebook_dir = '/home/jovyan/work'
-exchange_dir = '/home/jovyan/exchange'
-c.DockerSpawner.notebook_dir = notebook_dir
+notebook_dir = '/home/jovyan/DS1EDP'
+exchange_dir = '/var/exchange'
+workspace_dir = '/home/jovyan'
+c.DockerSpawner.notebook_dir = workspace_dir
 c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir, 'exchange':  exchange_dir}
 
 # TU Berlin LDAP authenticator
