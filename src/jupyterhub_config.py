@@ -19,7 +19,7 @@ c.DockerSpawner.image = 'jupyter-node'
 
 # Persist workspaces
 notebook_dir = '/home/jovyan/DS1EDP'
-exchange_dir = '/var/exchange'
+exchange_dir = '/home/jovyan/.hidden/exchange'
 workspace_dir = '/home/jovyan'
 c.DockerSpawner.notebook_dir = workspace_dir
 c.DockerSpawner.volumes = { 'jupyterhub-user-{username}': notebook_dir, 'exchange':  exchange_dir}
