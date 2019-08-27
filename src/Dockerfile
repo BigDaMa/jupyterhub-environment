@@ -5,8 +5,8 @@ USER jovyan
 RUN pip install --no-cache \
     nbgitpuller
 
-RUN git clone https://github.com/jupyter/nbgrader /home/jovyan/nbgrader
-RUN pip install -r /home/jovyan/nbgrader/dev-requirements.txt -e /home/jovyan/nbgrader
+RUN git clone https://github.com/jupyter/nbgrader /var/nbgrader
+RUN pip install -r /var/nbgrader/dev-requirements.txt -e /var/nbgrader
 
 RUN jupyter serverextension enable nbgitpuller --user
 RUN jupyter nbextension install --user --py nbgrader --overwrite
@@ -22,7 +22,7 @@ RUN groupadd -g 1024 jupyter
 RUN usermod -a -G jupyter jovyan
 
 USER jovyan
-RUN mkdir /home/jovyan/exchange
+RUN mkdir /var/exchange
 COPY nbgrader_config.py /home/jovyan/.jupyter/nbgrader_config.py
 
 USER root
