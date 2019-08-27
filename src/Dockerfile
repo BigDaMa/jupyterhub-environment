@@ -8,13 +8,13 @@ RUN pip install --no-cache \
 RUN git clone https://github.com/jupyter/nbgrader /home/jovyan/nbgrader
 RUN pip install -r /home/jovyan/nbgrader/dev-requirements.txt -e /home/jovyan/nbgrader
 
-RUN jupyter serverextension enable nbgitpuller --sys-prefix
-RUN jupyter nbextension install --sys-prefix --py nbgrader --overwrite
-RUN jupyter nbextension enable --sys-prefix --py nbgrader
-RUN jupyter serverextension enable --sys-prefix --py nbgrader
-RUN jupyter nbextension disable --sys-prefix create_assignment/main
-RUN jupyter nbextension disable --sys-prefix formgrader/main --section=tree
-RUN jupyter serverextension disable --sys-prefix nbgrader.server_extensions.formgrader
+RUN jupyter serverextension enable nbgitpuller --user
+RUN jupyter nbextension install --user --py nbgrader --overwrite
+RUN jupyter nbextension enable --user --py nbgrader
+RUN jupyter serverextension enable --user --py nbgrader
+RUN jupyter nbextension disable --user create_assignment/main
+RUN jupyter nbextension disable --user formgrader/main --section=tree
+RUN jupyter serverextension disable --user nbgrader.server_extensions.formgrader
 
 USER root
 RUN groupadd -g 1024 jupyter
