@@ -101,9 +101,9 @@ The `nbgrader_config.py` file includes some basic configurations for the nbgrade
 
 | Field | Description |
 |---|---|
-| `c.Exchange.course_id` | The ID of the nbgrader course. E.g. `'data8'` |
+| `c.CourseDirectory.course_id` | The ID of the nbgrader course. E.g. `'ds1edp_ws19'` |
 | `c.Exchange.root` | The path to the shared nbgrader directory. Must match the `exchange_dir` variable in `jupyterhub_config.py`. E.g. `'/home/jovyan/exchange'` |
-| `c.CourseDirectory.root` | This variable is relevant for the instructors (where formgrader is available). It should contain the location of the actual nbgrader course. E.g. `/home/jovyan/work/data8`. It should be a subdirectory of the persisted workspace of the admin user, so the course data will be persisted |
+| `c.CourseDirectory.root` | This variable is relevant for the instructors (where formgrader is available). It should contain the location of the actual nbgrader course. E.g. `/home/jovyan/work/ds1edp_ws19`. It should be a subdirectory of the persisted workspace of the admin user, so the course data will be persisted |
 
 ### JupyterNotebook
 
@@ -146,14 +146,42 @@ We can't execute this step within the Dockerfile, because the persistent workspa
 	cd ${WORKSPACE}/JupyterHub_environment/src
 	jupyterhub
 
+**11. Activate extensions for admin**
+- Log in to JupyterHub as **admin** - Students containers should **not** activate the extensions
+- Open the terminal (New > Terminal)
+
+	
+	jupyter nbextension enable --user --py nbgrader
+	jupyter serverextension enable --user --py nbgrader
+
 **10. Create nbgrader course** (If there is no nbgrader course created yet)
 - Log in to JupyterHub as admin
 - Open the terminal (New > Terminal)
 
-
+	
 	cd /home/jovyan/work
-	nbgrader quickstart data8
+	nbgrader quickstart ds1edp_ws19
 
-Note: `data8` is the course id. It has to match `c.CourseDirectory.course_id` and `c.CourseDirectory.root` in `nbgrader_config.py`.
+Note: `ds1edp_ws19` is the course id. It has to match `c.CourseDirectory.course_id` and `c.CourseDirectory.root` in `nbgrader_config.py`.
+
+## 5. Operation
+
+### Current installation on data8 server
+
+Location of the installation
+
+### Delete a user
+
+1. Remove user from whitelist (edit `c.Authenticator.whitelist` in `${WORKSPACE}/JupyterHub_environment/src/jupyterhub_config.py`)
+2. Remove user from JupyterHub:
+	- Log in as admin
+	- Control Panel > Admin > delete user
+3. Delete persistent volume from `/var/lib/docker/volumes` (optional)
+
+### Move to a new server
+
+1. Copy persistent volumes from old server (usually at `/var/lib/docker/volumes`)
+2. Setup the new server and install JupyterHub as described in **4.**
+3. Before you log in for the first time, copy the persistent volumes to the new server (again usually to `/var/lin/docker/volumes`)
 
 [architectureDiagram]: ./resources/JupyterHub2.png "Architecture diagram"

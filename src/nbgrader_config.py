@@ -1,5 +1,5 @@
 c = get_config()
 
 c.Exchange.root = '/home/jovyan/exchange'
-c.CourseDirectory.course_id = 'data8'
-c.CourseDirectory.root = '/home/jovyan/work/data8'
+c.CourseDirectory.course_id = 'ds1edp_ws19'
+c.CourseDirectory.root = '/home/jovyan/work/ds1edp_ws19'

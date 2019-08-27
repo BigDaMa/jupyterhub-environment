@@ -13,6 +13,7 @@ RUN jupyter nbextension install --user --py nbgrader --overwrite
 RUN jupyter nbextension enable --user --py nbgrader
 RUN jupyter serverextension enable --user --py nbgrader
 RUN jupyter nbextension disable --user create_assignment/main
+RUN jupyter nbextension disable --user course_list/main --section=tree
 RUN jupyter nbextension disable --user formgrader/main --section=tree
 RUN jupyter serverextension disable --user nbgrader.server_extensions.formgrader
 
