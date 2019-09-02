@@ -93,8 +93,6 @@ The latest stable version of nbgrader is currently v.0.5.5, but in our case it i
 
 It also creates the directory `/home/jovyan/.exchange` which is the mounting point of the shared exchange directory. A nbgrader configuration is copied to `/home/jovyan/.jupyter`, this file is further explained in the following section.
 
-Finally, we replace the `start-notebook.sh` script which is executed when the container boots. The script generally just starts the jupyter notebook server. In the altered version it also checks whether the Repository with the course sources is already available in the workspace. If not, it is cloned.
-
 ### NbGrader
 
 The `nbgrader_config.py` file includes some basic configurations for the nbgrader extension.
@@ -105,11 +103,13 @@ The `nbgrader_config.py` file includes some basic configurations for the nbgrade
 | `c.Exchange.root` | The path to the shared nbgrader directory. Must match the `exchange_dir` variable in `jupyterhub_config.py`. E.g. `'/home/jovyan/.exchange'` |
 | `c.CourseDirectory.root` | This variable is relevant for the instructors (where formgrader is available). It should contain the location of the actual nbgrader course. E.g. `/home/jovyan/ds1edp_ws19`. It should be a subdirectory of the persisted workspace of the admin user, so the course data will be persisted |
 
-### JupyterNotebook
+### NbGitPuller
 
-We also need to copy a sligthly modified version of the file **start-notebook.sh**. This file is executed when the container starts and it starts the JupyterNotebook server. We are additionally checking wheather the course repository is present in the working directory. If not, the repository is cloned to this location.
+Share a nbgitpuller link with the students. Via this link, the specified git repository is clone to the students container. The repositories are located at `/home/jovyan`, thus all the changes by students are persisted on their containers persistent volume. The nbgitpuller prevents most of the possible merge conflicts that could occur. 
 
-We can't execute this step within the Dockerfile, because the persistent workspace volume is mounted on the container when it is spawned by the JupyterHub. Therefor, the working directory is only available after the first start and **not** when the container image is built.
+**Note:** Best practice would be to ask the students to click on a nbgitpuller link when they log in for the first time. On this way, the students already have the repository cloned when they first use the hub. This will reduce confusion.
+
+If you want to share a new repository with the students, just share a new nbgitpuller link. NbGitPuller links can be generated [here](https://jupyterhub.github.io/nbgitpuller/link.html).
 
 ## 4 - Installation
 
@@ -172,10 +172,12 @@ Note: `ds1edp_ws19` is the course id. It has to match `c.CourseDirectory.course_
 
 ### Current installation on data8 server
 
-The installation is currently located at `/home/data8/anaconda3/envs/ds1edp_ws19`.
-JupyterHub is running in a detached [screen](https://www.gnu.org/software/screen/manual/screen.html), use `screen -r ${SCREEN_NAME}` to access the screen that is running the JupyterHub.
-Also make sure to activate the conda environment, that was created for this scenario by using `conda activate ds1edp_ws19`.
-The persistent volumes for the docker containers can be found at `/var/lib/docker/volumes`.
+- The installation is currently located at `/home/data8/anaconda3/envs/ds1edp_ws19/JupyterHub_environment`
+- JupyterHub is running in a detached [screen](https://www.gnu.org/software/screen/manual/screen.html), use `screen -r ${SCREEN_NAME}` to access the screen that is running the JupyterHub
+- Also make sure to activate the conda environment, that was created for this scenario by using `conda activate ds1edp_ws19`
+- The persistent volumes for the docker containers can be found at `/var/lib/docker/volumes`
+- The current server's IP is `130.149.21.99`
+- The location of the SSL certificates is `/home/data8/anaconda3/envs/ds1edp_ws19/certs`
 
 ### Delete a user
 
@@ -191,14 +193,5 @@ The persistent volumes for the docker containers can be found at `/var/lib/docke
 2. Setup the new server and install JupyterHub as described in **4.**
 3. Before you log in for the first time, copy the persistent volumes to the new server (again usually to `/var/lib/docker/volumes`)
 4. Log in to JupyterHub and the workspace from the old server should be loaded
-
-### Change the course Git repository
-
-If you want to clone another git repository to the containers, `start-notebook.sh` has to be edited.
-
-1. If the target name `DS1EDP` does not make sense anymore, replace `DS1EDP` by a new directory name in the `TARGET` variable. Make sure to keep the rest of the path as is. (The directory should me below `/home/jovyan`)
-2. Edit the variable `REPO_URL` and replace the old repository url by a new one.
-3. Build a new image as described in **4.8**.
-4. If a nbgitpuller link was shared with students, a new one has to be created. Visit the [official docs](https://jupyterhub.github.io/nbgitpuller/link.html) to generate a new one.
 
 [architectureDiagram]: ./resources/JupyterHub2.png "Architecture diagram"
