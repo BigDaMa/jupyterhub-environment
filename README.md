@@ -172,7 +172,10 @@ Note: `ds1edp_ws19` is the course id. It has to match `c.CourseDirectory.course_
 
 ### Current installation on data8 server
 
-Location of the installation
+The installation is currently located at `/home/data8/anaconda3/envs/ds1edp_ws19`.
+JupyterHub is running in a detached [screen](https://www.gnu.org/software/screen/manual/screen.html), use `screen -r ${SCREEN_NAME}` to access the screen that is running the JupyterHub.
+Also make sure to activate the conda environment, that was created for this scenario by using `conda activate ds1edp_ws19`.
+The persistent volumes for the docker containers can be found at `/var/lib/docker/volumes`.
 
 ### Delete a user
 
@@ -187,5 +190,15 @@ Location of the installation
 1. Copy persistent volumes from old server (usually at `/var/lib/docker/volumes`)
 2. Setup the new server and install JupyterHub as described in **4.**
 3. Before you log in for the first time, copy the persistent volumes to the new server (again usually to `/var/lib/docker/volumes`)
+4. Log in to JupyterHub and the workspace from the old server should be loaded
+
+### Change the course Git repository
+
+If you want to clone another git repository to the containers, `start-notebook.sh` has to be edited.
+
+1. If the target name `DS1EDP` does not make sense anymore, replace `DS1EDP` by a new directory name in the `TARGET` variable. Make sure to keep the rest of the path as is. (The directory should me below `/home/jovyan`)
+2. Edit the variable `REPO_URL` and replace the old repository url by a new one.
+3. Build a new image as described in **4.8**.
+4. If a nbgitpuller link was shared with students, a new one has to be created. Visit the [official docs](https://jupyterhub.github.io/nbgitpuller/link.html) to generate a new one.
 
 [architectureDiagram]: ./resources/JupyterHub2.png "Architecture diagram"
