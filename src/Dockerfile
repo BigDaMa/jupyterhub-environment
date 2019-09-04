@@ -28,3 +28,7 @@ COPY nbgrader_config.py /home/jovyan/.jupyter/nbgrader_config.py
 USER root
 RUN chown jovyan:1024 /home/jovyan/.jupyter/nbgrader_config.py
 RUN rm -r -f /home/jovyan/work
+
+# Install python libraries here
+USER jovyan
+RUN pip install numpy datascience

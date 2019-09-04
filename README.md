@@ -93,6 +93,8 @@ The latest stable version of nbgrader is currently v.0.5.5, but in our case it i
 
 It also creates the directory `/home/jovyan/.exchange` which is the mounting point of the shared exchange directory. A nbgrader configuration is copied to `/home/jovyan/.jupyter`, this file is further explained in the following section.
 
+Last but not least, python libraries are installed that can be used within notenooks. Currently `numpy` and `datascience` are installed. Further libraries can be added by simply extending the list.
+
 ### NbGrader
 
 The `nbgrader_config.py` file includes some basic configurations for the nbgrader extension.
