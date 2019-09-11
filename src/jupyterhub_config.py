@@ -16,6 +16,7 @@ c.JupyterHub.ssl_cert = '/etc/certs/server.crt'
 # Use docker spawner
 c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 c.DockerSpawner.image = 'jupyter-node'
+c.Spawner.mem_limit = '1G'
 
 # Persist workspaces
 notebook_dir = '/home/jovyan'

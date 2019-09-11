@@ -50,6 +50,7 @@ The JupyterHub is configured via *jupyterhub_config.py*.
 |---|---|
 | `c.JupyterHub.spawner_class` | The desired [spawner](https://jupyterhub.readthedocs.io/en/stable/reference/spawners.html). In our case this has to be `'dockerspawner.DockerSpawner'`. Make sure that dockerspawner is installed via pip |
 | `c.DockerSpawner.image` | As we want to use a customized docker image, we have to provide the name. Mind that the image has to be available in the remote/local registry |
+| `c.Spawner.mem_limit` | The memory limit for every container. The value can either be an integer (bytes) or a string with a 'K', 'M', 'G' or 'T' prefix. |
 | `notebook_dir` | We store the path of the jupyter servers workspace in this variable (inside container). This directory will be persisted. We use a [minimal image](https://github.com/jupyter/docker-stacks/tree/master/minimal-notebook) provided by the jupyter project, which comes with the default user **jovyan**. Thus, we set this variable to `/home/jovyan` |
 | `exchange_dir` | This variable should contain the path to the nbgrader exchange directory (shared by all users). The persistent exchange directory will be mounted to this path. This path should match the configured `c.Exchange.root` in the `nbgrader_config.py`. We will use `/home/jovyan/.exchange` here |
 | `c.DockerSpawner.notebook_dir` | The entrypoint for the notebook server. Should match the mounted persistent directory. Thus it has to be `notebook_dir`, that we declared earlier |
