@@ -14,13 +14,13 @@ The following software is required:
 ![alt text][architectureDiagram]
 
 #### JupyterHub
-The JupyterHub is the central component of thi architecture. The hub authenticates users with the **TUBIT LDAP** authentication service. In order to log in to the hub, stundents not only have to be authenticated by the LDAP service, they also need to be mentioned in the authentication whitelist. As soon as a user is successfully authenticated, the hub spawns a new Docker container, that runs a Jupyter Notebook server.
+The JupyterHub is the central component of the architecture. The hub authenticates users with the **TUBIT LDAP** authentication service. In order to log in to the hub, stundents not only have to be authenticated by the LDAP service, they also need to be mentioned in the authentication whitelist. As soon as a user is successfully authenticated, the hub spawns a new Docker container, that runs a Jupyter Notebook server.
 
 #### Docker containers
-Every Jupyter Notebook server is started within an isolated and unique docker container. Thus, every user has its own docker container. These containers can be started and stopped dynamically, hence only the containers of users that are cuurently active have to be running concurrently. The docker image that is used in this setup is based on the Jupyter Notebook minimal image and was customized in order to enable nbgrader functionality.
+Every Jupyter Notebook server is started within an isolated and unique docker container. Thus, every user has its own docker container. These containers can be started and stopped dynamically, hence only the containers of users that are currently active have to be running concurrently. The docker image that is used in this setup is based on the Jupyter Notebook [minimal image](https://github.com/jupyter/docker-stacks/tree/master/minimal-notebook) and was customized in order to enable nbgrader functionality.
 
 #### Persistent workspaces
-A dedicated volume is created for every container (user). This allows to persist the users workspaces event if the container is delted (e.g. if the image of the container has to be updated). These volumes are mounted to the docker container on startup.
+A dedicated volume is created for every container (user). This allows to persist the users workspaces even if the container is delted (e.g. if the image of the container has to be updated). These volumes are mounted to the docker container on startup.
 
 #### Shared nbgrader exchange volume
 The nbgrader extension that we use to create, distribute, collect and grade assignments requires a shared exchange directory. In contrast to the persistent workspace volumes, this volume is shared by all users and therefore mounted to every container.
@@ -33,6 +33,7 @@ The course material is managed in a Git repository. The **nbgitpuller** tool all
 
 ### JupyterHub
 The JupyterHub is configured via *jupyterhub_config.py*.
+You can fin ddetailed documentation for every issue at the official [website](https://jupyterhub.readthedocs.io/en/stable/).
 
 #### General configuration
 
@@ -118,9 +119,16 @@ If you want to share a new repository with the students, just share a new nbgitp
 
 **1. Install python and pip (>=python3.5)**
 
+If you don't alreay have python installed, follow [these](https://realpython.com/installing-python/) instructions.
+
 **2. Install docker**
 
+Visit the official [documentation](https://docs.docker.com/install/) for detailed installation instructions
+
 **3. Install npm**
+
+	apt install nodejs //on ubuntu
+	yum install nodejs //on centos
 
 **4. Install neccessary libs**
 
@@ -149,7 +157,7 @@ If you want to share a new repository with the students, just share a new nbgitp
 	cd ${WORKSPACE}/JupyterHub_environment/src
 	jupyterhub
 
-**11. Activate extensions for admin**
+**10. Activate extensions for admin**
 - Log in to JupyterHub as **admin** - Students containers should **not** activate the extensions
 - Open the terminal (New > Terminal)
 
@@ -161,11 +169,10 @@ If you want to share a new repository with the students, just share a new nbgitp
 
 - The formgrader might not work right away and show a 404 instead. Just restart the container and you should be good to go.
 
-**10. Create nbgrader course** (If there is no nbgrader course created yet)
+**11. Create nbgrader course** (If there is no nbgrader course created yet)
 - Log in to JupyterHub as admin
 - Open the terminal (New > Terminal)
 
-	
 	cd /home/jovyan
 	nbgrader quickstart ds1edp_ws19
 
@@ -196,5 +203,22 @@ Note: `ds1edp_ws19` is the course id. It has to match `c.CourseDirectory.course_
 2. Setup the new server and install JupyterHub as described in **4.**
 3. Before you log in for the first time, copy the persistent volumes to the new server (again usually to `/var/lib/docker/volumes`)
 4. Log in to JupyterHub and the workspace from the old server should be loaded
+
+### Update the Docker image
+
+You may want to use another docker image. E.g. when you need further python libraries.
+
+1. Stop the JupyterHub server
+2. Build the new image (use the same tag as mentioned in `c.DockerSpawner.image` or update this variable with the new name)
+3. Delete the "old" containers. `docker rm ${container-name}` (don't worry, the workspaces are presisted)
+4. Restart the JupyterHub
+
+### Archive all user workspaces
+
+	DEST=/home/data8/volumes.zip
+	zip -r ${DEST} /var/lib/docker/volumes -x *.git* -x *.cache*
+
+**Note:** `DEST` is the location where the archive will be created. 
+**Note:** Exclude directories or files that you don't want to archive with `-x`
 
 [architectureDiagram]: ./resources/JupyterHub2.png "Architecture diagram"
