@@ -1,35 +1,38 @@
 # BigDaMa - DS1EDP - JupyterHub infrastructure
-## 1 - Requirements
 
-The following software is required:
+This repository contains all neccessary configuration files for the DS1EDP JupyterHub environment.
 
-1. [Docker](https://www.docker.com/)
-1. [JupyterHub](https://jupyter.org/hub)
-1. [Python 3](https://www.python.org/)
+You can find detailed information about:
 
-*Note:* Sudo permissions may be required at some points.
+[**The architecture**](#1---architecture) - Detailed introduction of all relevant components
 
-## 2 - Architecture
+[**The configurations**](#2---configuration) - Detailed description about configuration options
+
+[**The installation**](#3---installation) - Step by step installation guide
+
+[**The operation**](#4---operation) - Information about the current system and guides for administrative tasks
+
+## 1 - Architecture
 
 ![alt text][architectureDiagram]
 
-#### JupyterHub
+### JupyterHub
 The JupyterHub is the central component of the architecture. The hub authenticates users with the **TUBIT LDAP** authentication service. In order to log in to the hub, stundents not only have to be authenticated by the LDAP service, they also need to be mentioned in the authentication whitelist. As soon as a user is successfully authenticated, the hub spawns a new Docker container, that runs a Jupyter Notebook server.
 
-#### Docker containers
+### Docker containers
 Every Jupyter Notebook server is started within an isolated and unique docker container. Thus, every user has its own docker container. These containers can be started and stopped dynamically, hence only the containers of users that are currently active have to be running concurrently. The docker image that is used in this setup is based on the Jupyter Notebook [minimal image](https://github.com/jupyter/docker-stacks/tree/master/minimal-notebook) and was customized in order to enable nbgrader functionality.
 
-#### Persistent workspaces
-A dedicated volume is created for every container (user). This allows to persist the users workspaces even if the container is delted (e.g. if the image of the container has to be updated). These volumes are mounted to the docker container on startup.
+### Persistent workspaces
+A dedicated volume is created for every container (user). This allows to persist the users workspaces even if the container is delted (e.g. if the image of the container has to be updated). These volumes are mounted to the docker container on startup. For more information refer to the official [documentation](https://github.com/jupyterhub/dockerspawner#data-persistence-and-dockerspawner).
 
-#### Shared nbgrader exchange volume
-The nbgrader extension that we use to create, distribute, collect and grade assignments requires a shared exchange directory. In contrast to the persistent workspace volumes, this volume is shared by all users and therefore mounted to every container.
+### Shared nbgrader exchange volume
+The [nbgrader extension](https://nbgrader.readthedocs.io/en/stable/index.html) that we use to create, distribute, collect and grade assignments requires a shared exchange directory. In contrast to the persistent workspace volumes, this volume is shared by all users and therefore mounted to every container.
 
-#### Git repository
-The course material is managed in a Git repository. The **nbgitpuller** tool allows us to synchronize the persistent workspaces with our git repository and distribute new course materials.
+### Git repository
+The course material is managed in a Git repository. The [nbgitpuller](https://jupyterhub.github.io/nbgitpuller/) tool allows us to synchronize the persistent workspaces with our git repository and distribute new course materials.
 
 
-## 3 - Configuration
+## 2 - Configuration
 
 ### JupyterHub
 The JupyterHub is configured via *jupyterhub_config.py*.
@@ -60,7 +63,7 @@ You can fin ddetailed documentation for every issue at the official [website](ht
 #### Authentication
 | Field | Description |
 |---|---|
-| `c.JupyterHub.authenticator_class` | The desired [authenticator](https://jupyterhub.readthedocs.io/en/stable/reference/authenticators.html). In our case this has to be `'ldapauthenticator.LDAPAuthenticator'`. Make sure to install it via pip |
+| `c.JupyterHub.authenticator_class` | The desired [authenticator](https://jupyterhub.readthedocs.io/en/stable/reference/authenticators.html). In our case this has to be `'ldapauthenticator.LDAPAuthenticator'`. Make sure to install it via pip (refer to [3.4](#4-install-neccessary-libs)) |
 | `c.Authenticator.admin_users` | A list with all user IDs, that should get access to the JupyterHub admin panel. E.g. `{'data8'}` |
 | `c.Authenticator.username_map` | Map specific IDs. We use this to redirect all instructor user IDs to a single admin account. E.g. `{'boninho': 'data8', 'esmailoghli': 'data8', 'abedjan': 'data8', 'm.mahdavi': 'data8', 'hagenanuth': 'data8'}` |
 | `c.Authenticator.whitelist` | A whitelist for users. If this list is not provided, every user that is authenticated by the authenticator (e.g. every TUBIT user) can access the hub. If provided, only the mentioned user IDs can access the hub. E.g. `{'stundent1', 'student2'}` |
@@ -68,17 +71,17 @@ You can fin ddetailed documentation for every issue at the official [website](ht
 **Note:** For more information on the usermanagement, whitelists, etc. refer to the [JupyterHub authenticator docs](https://jupyterhub.readthedocs.io/en/stable/getting-started/authenticators-users-basics.html)
 
 **Note:** In order to use the TUBIT LDAP service for authentication, the following configurations can be used
-
-	c.JupyterHub.authenticator_class = 'ldapauthenticator.LDAPAuthenticator'
-	c.LDAPAuthenticator.server_address = 'ldap-slaves.tu-berlin.de'
-	c.LDAPAuthenticator.bind_dn_template = ['uid={username},ou=user,dc=tu-berlin,dc=de']
-	c.LDAPAuthenticator.lookup_dn = False
-	c.LDAPAuthenticator.use_ssl = True
-	c.LDAPAuthenticator.lookup_dn_user_dn_attribute = 'cn'
-	c.LDAPAuthenticator.user_search_base = 'ou=user,dc=tu-berlin,dc=de'
-	c.LDAPAuthenticator.user_attribute = 'sAMAccountName'
-	c.LDAPAuthenticator.escape_userdn = False
-
+```
+c.JupyterHub.authenticator_class = 'ldapauthenticator.LDAPAuthenticator'
+c.LDAPAuthenticator.server_address = 'ldap-slaves.tu-berlin.de'
+c.LDAPAuthenticator.bind_dn_template = ['uid={username},ou=user,dc=tu-berlin,dc=de']
+c.LDAPAuthenticator.lookup_dn = False
+c.LDAPAuthenticator.use_ssl = True
+c.LDAPAuthenticator.lookup_dn_user_dn_attribute = 'cn'
+c.LDAPAuthenticator.user_search_base = 'ou=user,dc=tu-berlin,dc=de'
+c.LDAPAuthenticator.user_attribute = 'sAMAccountName'
+c.LDAPAuthenticator.escape_userdn = False
+```
 **DummyAuthenticator:** For testing use (not for production!), the [DummyAuthenticator](https://github.com/jupyterhub/dummyauthenticator) can be used. This Authenticator accepts all username/password combinations. Just uncomment the last line of the **jupyterhub_config.py**.
 
 #### cull-idle
@@ -115,81 +118,105 @@ Share a nbgitpuller link with the students. Via this link, the specified git rep
 
 If you want to share a new repository with the students, just share a new nbgitpuller link. NbGitPuller links can be generated [here](https://jupyterhub.github.io/nbgitpuller/link.html).
 
-## 4 - Installation
+## 3 - Installation
 
-**1. Install python and pip (>=python3.5)**
+### 1. Install python and pip
 
-If you don't alreay have python installed, follow [these](https://realpython.com/installing-python/) instructions.
+If you don't alreay have python installed, follow [these](https://realpython.com/installing-python/) instructions
 
-**2. Install docker**
+**Note:** python version >= 3.5 is required
+
+### 2. Install docker
 
 Visit the official [documentation](https://docs.docker.com/install/) for detailed installation instructions
 
-**3. Install npm**
+### 3. Install npm
+```
+apt install nodejs # on ubuntu
+yum install nodejs # on centos
+```
+### 4. Install neccessary libs
+```
+pip3 install jupyterhub dockerspawner jupyterhub-ldapauthenticator jupyterhub-dummyauthenticator
+```
+### 5. Install http-proxy
+```
+npm install -g configurable-http-proxy
+```
+### 6. Clone git repository
+```
+# Assuming $WORKSPACE is the path where jupyterhub should be installed
+cd $WORKSPACE
+git clone https://github.com/BigDaMa/JupyterHub_environment
+```
+### 7. Edit jupyterhub_conf.sh
+```
+# Insert IP, SSL-certificate location and user whitelist
+vi ${WORKSPACE}/JupyterHub_environment/src/jupyterhub_config.py
+```
+### 8. Build docker image
+```
+cd ${WORKSPACE}/JupyterHub_environment/src
+docker build -t jupyter-node .
+# The tag should equal the `c.DockerSpawner.image` configuration in `jupyterhub_config.py`
+```
+### 9. Start jupyterhub
+```	
+cd ${WORKSPACE}/JupyterHub_environment/src
+jupyterhub
+```
+### 10. Activate extensions for admin
+Log in to JupyterHub as **admin** - Students containers should **not** activate the extensions
 
-	apt install nodejs //on ubuntu
-	yum install nodejs //on centos
+Open the terminal (New > Terminal)
+```
+jupyter nbextension enable --user create_assignment/main
+jupyter nbextension enable --user formgrader/main --section=tree
+jupyter serverextension enable --user nbgrader.server_extensions.formgrader
+```
+The formgrader might not work right away and show a 404 instead. Just restart the container and you should be good to go
 
-**4. Install neccessary libs**
+### 11. Create nbgrader course (If there is no nbgrader course created yet)
 
-	pip install jupyterhub dockerspawner jupyterhub-ldapauthenticator jupyterhub-dummyauthenticator
-	
-**5. Install http-proxy**
+Log in to JupyterHub as admin
 
-	npm install -g configurable-http-proxy
+Open the terminal (New > Terminal)
+```
+cd /home/jovyan
+nbgrader quickstart ds1edp_ws19
+```
+**Note:** `ds1edp_ws19` is the course id. It has to match `c.CourseDirectory.course_id` and `c.CourseDirectory.root` in `nbgrader_config.py`
 
-**6. Clone git repository** (assuming $WORKSPACE is the path where jupyterhub should be installed)
-
-	cd $WORKSPACE
-	git clone https://github.com/BigDaMa/JupyterHub_environment
-
-**7. Edit jupyterhub_conf.sh** (Insert IP, SSL-certificate location and user whitelist)
-
-	vi ${WORKSPACE}/JupyterHub_environment/src/jupyterhub_config.py
-
-**8. Build docker image** (Note: The tag should equal the `c.DockerSpawner.image` configuration in `jupyterhub_config.py`)
-
-	cd ${WORKSPACE}/JupyterHub_environment/src
-	docker build -t jupyter-node .
-
-**9. Start jupyterhub**
-	
-	cd ${WORKSPACE}/JupyterHub_environment/src
-	jupyterhub
-
-**10. Activate extensions for admin**
-- Log in to JupyterHub as **admin** - Students containers should **not** activate the extensions
-- Open the terminal (New > Terminal)
-
-
-	jupyter nbextension enable --user create_assignment/main
-	jupyter nbextension enable --user formgrader/main --section=tree
-	jupyter serverextension enable --user nbgrader.server_extensions.formgrader
-
-
-- The formgrader might not work right away and show a 404 instead. Just restart the container and you should be good to go.
-
-**11. Create nbgrader course** (If there is no nbgrader course created yet)
-- Log in to JupyterHub as admin
-- Open the terminal (New > Terminal)
-
-	cd /home/jovyan
-	nbgrader quickstart ds1edp_ws19
-
-Note: `ds1edp_ws19` is the course id. It has to match `c.CourseDirectory.course_id` and `c.CourseDirectory.root` in `nbgrader_config.py`.
-
-## 5. Operation
+## 4 - Operation
 
 ### Current installation on data8 server
 
 - The installation is currently located at `/home/data8/anaconda3/envs/ds1edp_ws19/JupyterHub_environment`
-- JupyterHub is running in a detached [screen](https://www.gnu.org/software/screen/manual/screen.html), use `screen -r ${SCREEN_NAME}` to access the screen that is running the JupyterHub
+- JupyterHub is running in a detached [screen](https://www.gnu.org/software/screen/manual/screen.html), use `screen -r ${SCREEN_NAME}` to access the screen that is running the JupyterHub. E.g.
+```
+screen -r jupyterhub_docker
+```
 - Also make sure to activate the conda environment, that was created for this scenario by using `conda activate ds1edp_ws19`
 - The persistent volumes for the docker containers can be found at `/var/lib/docker/volumes`
 - The current server's IP is `130.149.21.99`
 - The location of the SSL certificates is `/home/data8/anaconda3/envs/ds1edp_ws19/certs`
+- To stop JupyterHub, access the screen and terminate the process. E.g.
+```
+screen -r jupyterhub_docker
+ctrl + c
+```
+- To start the JupyterHub, access the screen and start the process. E.g.
+```
+screen -r jupyterhub_docker
+cd /home/data8/anaconda3/envs/ds1edp_ws19/JupyterHub_environment/src
+jupyterhub
+```
 
 ### Delete a user
+
+**Important:** The whitelist only blocks new users. If a non-whitelisted user has registered before the whitelist was introduced, he/she will still be able to access the JupyterHub. The user has to be deleted from the JupyterHub database (via the admin panel) as well.
+
+Follow these steps to permanently delete a user:
 
 1. Remove user from whitelist (edit `c.Authenticator.whitelist` in `${WORKSPACE}/JupyterHub_environment/src/jupyterhub_config.py`)
 2. Remove user from JupyterHub:
@@ -200,7 +227,7 @@ Note: `ds1edp_ws19` is the course id. It has to match `c.CourseDirectory.course_
 ### Move to a new server
 
 1. Copy persistent volumes from old server (usually at `/var/lib/docker/volumes`)
-2. Setup the new server and install JupyterHub as described in **4.**
+2. Setup the new server and install JupyterHub as described in section [3.](#3---installation)
 3. Before you log in for the first time, copy the persistent volumes to the new server (again usually to `/var/lib/docker/volumes`)
 4. Log in to JupyterHub and the workspace from the old server should be loaded
 
@@ -208,17 +235,28 @@ Note: `ds1edp_ws19` is the course id. It has to match `c.CourseDirectory.course_
 
 You may want to use another docker image. E.g. when you need further python libraries.
 
-1. Stop the JupyterHub server
-2. Build the new image (use the same tag as mentioned in `c.DockerSpawner.image` or update this variable with the new name)
-3. Delete the "old" containers. `docker rm ${container-name}` (don't worry, the workspaces are presisted)
+1. Stop the JupyterHub server. Use `ctrl + c` in in the screen to terminate JupyterHub
+2. Build the new image (use the same tag as mentioned in `c.DockerSpawner.image` or update this variable with the new name. Refer to [3.8](#8-build-docker-image)). E.g. 
+```
+cd ${WORKSPACE}/JupyterHub_environment/src
+docker build -t jupyter-node .
+```
+3. Delete the "old" containers (don't worry, the workspaces are presisted)
+```
+docker rm jupyter-data8
+# Repeat this step for every container that should be updated
+``` 
 4. Restart the JupyterHub
+```
+jupyterhub
+```
 
 ### Archive all user workspaces
-
-	DEST=/home/data8/volumes.zip
-	zip -r ${DEST} /var/lib/docker/volumes -x *.git* -x *.cache*
-
-**Note:** `DEST` is the location where the archive will be created. 
+```
+DEST=/home/data8/volumes.zip
+zip -r ${DEST} /var/lib/docker/volumes -x *.cache*
+```
+**Note:** `DEST` is the location where the archive file will be created. 
 **Note:** Exclude directories or files that you don't want to archive with `-x`
 
 [architectureDiagram]: ./resources/JupyterHub2.png "Architecture diagram"
