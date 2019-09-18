@@ -66,6 +66,7 @@ You can find detailed documentation for every JupyterHub related issue at the of
 |---|---|
 | `c.JupyterHub.authenticator_class` | The desired [authenticator](https://jupyterhub.readthedocs.io/en/stable/reference/authenticators.html). In our case this has to be `'ldapauthenticator.LDAPAuthenticator'`. Make sure to install it via pip (refer to [3.4](#4-install-neccessary-libs)) |
 | `c.Authenticator.admin_users` | A list with all user IDs, that should get access to the JupyterHub admin panel. E.g. `{'data8'}` |
+| `c.JupyterHub.admin_access` | Specify whether admin users can access the containers of other users. We are using `True` here |
 | `c.Authenticator.username_map` | Map specific IDs. We use this to redirect all instructor user IDs to a single admin account. E.g. `{'boninho': 'data8', 'esmailoghli': 'data8', 'abedjan': 'data8', 'm.mahdavi': 'data8', 'hagenanuth': 'data8'}` |
 | `c.Authenticator.whitelist` | A whitelist for users. If this list is not provided, every user that is authenticated by the authenticator (e.g. every TUBIT user) can access the hub. If provided, only the mentioned user IDs can access the hub. E.g. `{'stundent1', 'student2'}` |
 
@@ -87,7 +88,7 @@ c.LDAPAuthenticator.escape_userdn = False
 
 #### cull-idle
 
-The service `cull-idle` stops idle containers after the configured time. E.g: `--timeout=3600` stops idle instances after 1 hour. Refer to the [cull-idle docs](https://github.com/jupyterhub/jupyterhub/tree/master/examples/cull-idle) for further information.
+The service `cull-idle` stops idle containers after the configured time. E.g: `--timeout=900` stops idle instances after 15 minutes. Refer to the [cull-idle docs](https://github.com/jupyterhub/jupyterhub/tree/master/examples/cull-idle) for further information.
 
 ### Docker
 

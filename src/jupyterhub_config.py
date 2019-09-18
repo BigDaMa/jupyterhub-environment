@@ -38,6 +38,7 @@ c.LDAPAuthenticator.escape_userdn = False
 
 # User whitelist
 c.Authenticator.admin_users = {'data8'}
+c.JupyterHub.admin_access = True
 c.Authenticator.username_map = {'boninho': 'data8', 'esmailoghli': 'data8', 'abedjan': 'data8', 'm.mahdavi': 'data8', 'hagenanuth': 'data8'}
 # c.Authenticator.whitelist = {'mal', 'zoe', 'inara', 'kaylee'}
 
@@ -49,6 +50,6 @@ c.JupyterHub.services = [
     {
         'name': 'cull-idle',
         'admin': True,
-        'command': [sys.executable, 'cull_idle_servers.py', '--timeout=3600'],
+        'command': [sys.executable, 'cull_idle_servers.py', '--timeout=900'],
     }
 ]
