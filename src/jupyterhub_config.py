@@ -2,21 +2,22 @@ import os
 import sys
 
 # Public access
-c.JupyterHub.ip = '172.28.128.3'
-c.JupyterHub.port = 443
+c.JupyterHub.ip = '130.149.21.99'
+c.JupyterHub.port = 8000
 
 # Docker access
-c.JupyterHub.hub_ip = '172.28.128.3'
+c.JupyterHub.hub_ip = '130.149.21.99'
 c.JupyterHub.hub_port = 8081
 
 # SSL configuration
-c.JupyterHub.ssl_key = '/etc/certs/server.key'
-c.JupyterHub.ssl_cert = '/etc/certs/server.crt'
+c.JupyterHub.ssl_key = '/home/data8/anaconda3/envs/ds1edp_ws19/certs/jupyterhub.key'
+c.JupyterHub.ssl_cert = '/home/data8/anaconda3/envs/ds1edp_ws19/certs/jupyterhub.pem'
 
 # Use docker spawner
 c.JupyterHub.spawner_class = 'dockerspawner.DockerSpawner'
 c.DockerSpawner.image = 'jupyter-node'
 c.Spawner.mem_limit = '1G'
+c.Spawner.cpu_limit = 1
 
 # Persist workspaces
 notebook_dir = '/home/jovyan'
