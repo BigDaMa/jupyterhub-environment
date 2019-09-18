@@ -36,24 +36,24 @@ The course material is managed in a Git repository. The [nbgitpuller](https://ju
 
 ### JupyterHub
 The JupyterHub is configured via *jupyterhub_config.py*.
-You can fin ddetailed documentation for every issue at the official [website](https://jupyterhub.readthedocs.io/en/stable/).
+You can find detailed documentation for every JupyterHub related issue at the official [documentation/website](https://jupyterhub.readthedocs.io/en/stable/).
 
 #### General configuration
 
 | Field | Description |
 |---|---|
-| `c.JupyterHub.ip` | Has to match the server domain/ip. Students will access the hub via this domain |
-| `c.JupyterHub.port` | The port to use with the ip/domain. Should be `443` as we use https. Make sure the port is exposed |
-| `c.JupyterHub.hub_ip` | This should also match the server ip. The spawned notebook servers will use this endpoint to communicate with the hub |
+| `c.JupyterHub.ip` | Has to match the server domain/ip. Students will access the hub via this domain. Our current server has the IP `130.149.21.99` |
+| `c.JupyterHub.port` | The port to use with the ip/domain. We are currently using port `8000`. Make sure the port is exposed |
+| `c.JupyterHub.hub_ip` | This should also match the server ip (currently `130.149.21.99`). The spawned notebook servers will use this endpoint to communicate with the hub |
 | `c.JupyterHub.hub_port` | E.g. 8081. This port is used for notebook and hub communication |
-| `c.JupyterHub.ssl_key` | Location of the ssl key. Required for HTTPS communication |
-| `c.JupyterHub.ssl_cert` | Location of the ssl cert. Required for HTTPS communication |
+| `c.JupyterHub.ssl_key` | Location of the ssl key. Required for HTTPS communication. Current location is `/home/data8/anaconda3/envs/ds1edp_ws19/certs/jupyterhub.key` |
+| `c.JupyterHub.ssl_cert` | Location of the ssl cert. Required for HTTPS communication. Current location is `/home/data8/anaconda3/envs/ds1edp_ws19/certs/jupyterhub.pem` |
 
 #### Spawner and container configuration
 | Field | Description |
 |---|---|
-| `c.JupyterHub.spawner_class` | The desired [spawner](https://jupyterhub.readthedocs.io/en/stable/reference/spawners.html). In our case this has to be `'dockerspawner.DockerSpawner'`. Make sure that dockerspawner is installed via pip |
-| `c.DockerSpawner.image` | As we want to use a customized docker image, we have to provide the name. Mind that the image has to be available in the remote/local registry |
+| `c.JupyterHub.spawner_class` | The desired [spawner](https://jupyterhub.readthedocs.io/en/stable/reference/spawners.html). In our case this has to be `'dockerspawner.DockerSpawner'`. Make sure that dockerspawner is installed via pip (refer to [3.4](#4-install-neccessary-libs)) |
+| `c.DockerSpawner.image` | As we want to use a customized docker image, we have to provide the name. Mind that the image has to be available in the remote/local docker registry |
 | `c.Spawner.mem_limit` | The memory limit for every container. The value can either be an integer (bytes) or a string with a 'K', 'M', 'G' or 'T' prefix. |
 | `notebook_dir` | We store the path of the jupyter servers workspace in this variable (inside container). This directory will be persisted. We use a [minimal image](https://github.com/jupyter/docker-stacks/tree/master/minimal-notebook) provided by the jupyter project, which comes with the default user **jovyan**. Thus, we set this variable to `/home/jovyan` |
 | `exchange_dir` | This variable should contain the path to the nbgrader exchange directory (shared by all users). The persistent exchange directory will be mounted to this path. This path should match the configured `c.Exchange.root` in the `nbgrader_config.py`. We will use `/home/jovyan/.exchange` here |
