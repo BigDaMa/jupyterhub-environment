@@ -262,3 +262,6 @@ zip -r ${DEST} /var/lib/docker/volumes -x *.cache*
 **Note:** Exclude directories or files that you don't want to archive with `-x`
 
 [architectureDiagram]: ./resources/JupyterHub2.png "Architecture diagram"
+
+### Common Issues
+1. When we create physical linux users but the students still cannot log in, it could be due to three reasons: (1) They use a wrong username or password, (2) They use another browser rather than Google Chrome, and (3) We have created a user for them with some upercase characters.
