@@ -265,3 +265,5 @@ zip -r ${DEST} /var/lib/docker/volumes -x *.cache*
 
 ### Common Issues
 1. When we create physical linux users but the students still cannot log in, it could be due to three reasons: (1) They use a wrong username or password, (2) They use another browser rather than Google Chrome, and (3) We have created a user for them with some upercase characters.
+
+2. The jupyterhub config file of non-docker version is in "/anaconda3/envs/data8/bin/jupyterhub_config.py".
